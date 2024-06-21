@@ -45,7 +45,7 @@ local BLOCS =
         y = 60*Ypix,
         xScale = 15*Xpix,
         yScale = 40*Ypix,
-        texture = love.graphics.newImage("1.png")
+        texture = love.graphics.newImage("assets/1.png")
     },
     --2
     {
@@ -53,7 +53,7 @@ local BLOCS =
         y = 40*Ypix,
         xScale = 15*Xpix,
         yScale = 60*Ypix,
-        texture = love.graphics.newImage("2.png")  
+        texture = love.graphics.newImage("assets/2.png")  
     },
     --3
     {
@@ -61,7 +61,7 @@ local BLOCS =
         y = 0*Ypix,
         xScale = 15*Xpix,
         yScale = 50*Ypix,
-        texture = love.graphics.newImage("3.png")
+        texture = love.graphics.newImage("assets/3.png")
     },
     --4
     {
@@ -69,7 +69,7 @@ local BLOCS =
         y = 0*Ypix,
         xScale = 15*Xpix,
         yScale = 60*Ypix,
-        texture = love.graphics.newImage("2.png")  
+        texture = love.graphics.newImage("assets/2.png")  
     },
     --5
     {
@@ -77,7 +77,7 @@ local BLOCS =
         y = 40*Ypix,
         xScale = 15*Xpix,
         yScale = 20*Ypix,
-        texture = love.graphics.newImage("5.png")
+        texture = love.graphics.newImage("assets/5.png")
     }
 }
 local BALLS =
@@ -104,20 +104,20 @@ local BALLS =
 
 
 
-local BACKGROUND_START = love.graphics.newImage("start.png")
-local BOUTON_START = love.graphics.newImage("BOUTON_START.png")
-local RECOMMENCER = love.graphics.newImage("RECOMMENCER.png")
-local BACKGROUND1 = love.graphics.newImage("background.png")
-local BACKGROUND2 = love.graphics.newImage("background.png")
-local FRONTGROUND1 = love.graphics.newImage("frontground.png")
-local FRONTGROUND2 = love.graphics.newImage("frontground.png")
-local texture = love.graphics.newImage("1.png")
-local PLAYER = love.graphics.newImage("player.png")
-local BALL = love.graphics.newImage("ball.png")
-local GAME_OVER = love.graphics.newImage("GAME_OVER.png")
-local LEVEL_2 = love.graphics.newImage("level2.png")
-local LEVEL_3 = love.graphics.newImage("level3.png")
-music = love.audio.newSource( "RUBBUR_WORLD1.mp3", "static" )
+local BACKGROUND_START = love.graphics.newImage("assets/start.png")
+local BOUTON_START = love.graphics.newImage("assets/BOUTON_START.png")
+local RECOMMENCER = love.graphics.newImage("assets/RECOMMENCER.png")
+local BACKGROUND1 = love.graphics.newImage("assets/background.png")
+local BACKGROUND2 = love.graphics.newImage("assets/background.png")
+local FRONTGROUND1 = love.graphics.newImage("assets/frontground.png")
+local FRONTGROUND2 = love.graphics.newImage("assets/frontground.png")
+local texture = love.graphics.newImage("assets/1.png")
+local PLAYER = love.graphics.newImage("assets/player.png")
+local BALL = love.graphics.newImage("assets/ball.png")
+local GAME_OVER = love.graphics.newImage("assets/GAME_OVER.png")
+local LEVEL_2 = love.graphics.newImage("assets/level2.png")
+local LEVEL_3 = love.graphics.newImage("assets/level3.png")
+music = love.audio.newSource( "assets/RUBBUR_WORLD1.mp3", "static" )
 music:setLooping( true )
 music:play()
 
