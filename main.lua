@@ -46,7 +46,7 @@ local BLOCS =
         xScale = 15*Xpix,
         yScale = 40*Ypix,
         texture = love.graphics.newImage("assets/1.png")
-    },
+},
     --2
     {
         x = -16*Xpix,
@@ -117,9 +117,13 @@ local BALL = love.graphics.newImage("assets/ball.png")
 local GAME_OVER = love.graphics.newImage("assets/GAME_OVER.png")
 local LEVEL_2 = love.graphics.newImage("assets/level2.png")
 local LEVEL_3 = love.graphics.newImage("assets/level3.png")
-music = love.audio.newSource( "assets/RUBBUR_WORLD1.mp3", "static" )
-music:setLooping( true )
-music:play()
+local music1 = love.audio.newSource( "assets/RUBBUR_WORLD1.mp3", "static" )
+local music2 = love.audio.newSource( "assets/RUBBUR_WORLD2.mp3", "static" )
+local music3 = love.audio.newSource( "assets/RUBBUR_WORLD3.mp3", "static" )
+music1:setLooping( true )
+music2:setLooping( true )
+music3:setLooping( true )
+music1:play()
 
 function love.load()
     state="start"
@@ -231,6 +235,7 @@ function love.mousepressed( x, y)
     if state == "start" then
         if testHitboxPoint(x,y,STARTx,STARTy,STARTxScale,STARTyScale) then
             state = "play"
+            music1:play()
         end
     end
     if state == "game_over" then
@@ -359,6 +364,8 @@ function love.update(dt)
     if level == 1 and score >= 30 then
         state = "level_up"
         level=2
+        music1:stop()
+        music2:play()
         physics_boost=2
         sablier=0
         scroll_speed=200
@@ -367,6 +374,8 @@ function love.update(dt)
     if level == 2 and score >= 60 then
         state = "level_up"
         level=3
+        music2:stop()
+        music3:play()
         physics_boost=2.5
         sablier=0
         scroll_speed=300
@@ -410,9 +419,12 @@ function love.draw()
             end
         end
         love.graphics.setColor(1,1,1,1)
-        love.graphics.draw(PLAYER,xPLAYER,yPLAYER,math.deg(v/10000),0.5*SCREEN_W/700,0.5*SCREEN_H/500,75,75)
+        love.graphics.draw(PLAYER,xPLAYER,yPLAYER,math.deg(v/10000),0.5*SCREEN_H/500,0.5*SCREEN_H/500,75,75)
 
     elseif state =="game_over" then
+        music2:stop()
+        music3:stop()
+        music1:stop()
 
         love.graphics.draw(GAME_OVER,0,0,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
         love.graphics.draw(RECOMMENCER,30*Xpix,70*Ypix,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
