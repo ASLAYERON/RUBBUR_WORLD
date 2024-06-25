@@ -1,5 +1,7 @@
+love.window.setFullscreen( true )
 local SCREEN_W,SCREEN_H = love.graphics.getDimensions()
-
+SCREEN_W = 1.4*SCREEN_H
+love.window.setMode(SCREEN_W, SCREEN_H)
 local Xpix = SCREEN_W/100
 local Ypix = SCREEN_H/100
 local yPLAYER = SCREEN_H/2
@@ -124,7 +126,7 @@ music1:setLooping( true )
 music2:setLooping( true )
 music3:setLooping( true )
 music1:play()
-
+love.audio.setVolume( 0 )
 function love.load()
     state="start"
     mouse=0
@@ -289,7 +291,7 @@ function love.update(dt)
         xBack2=xBack2-scroll_speed*dt/2
 
         sablier=sablier+scroll_speed*dt
-        sablier_speed = 450+(level-1)*50
+        sablier_speed = (450+(level-1)*50)*SCREEN_W/700
 
         if sablier>=sablier_speed then
             sablier=0
@@ -333,7 +335,6 @@ function love.update(dt)
                         if BALLS[BALLnum].x <= -10*Xpix then
                             if BALLnum == 3 and secu == 1 then
                                 sablierBALL=sablier_speed
-                                print("oui ptn c jouable")
                             else
                                 BALLS[BALLnum].x = 110*Xpix
                             end
@@ -359,7 +360,7 @@ function love.update(dt)
             end
         end
         score=score+dt
-        scroll_speed=100+5*score
+        scroll_speed=(100+5*score)*(SCREEN_W/700)
     end
     if level == 1 and score >= 30 then
         state = "level_up"
@@ -419,7 +420,7 @@ function love.draw()
             end
         end
         love.graphics.setColor(1,1,1,1)
-        love.graphics.draw(PLAYER,xPLAYER,yPLAYER,math.deg(v/10000),0.5*SCREEN_H/500,0.5*SCREEN_H/500,75,75)
+        love.graphics.draw(PLAYER,xPLAYER,yPLAYER,math.deg(v/10000),0.5*SCREEN_W/700,0.5*SCREEN_H/500,75,75)
 
     elseif state =="game_over" then
         music2:stop()
@@ -443,9 +444,8 @@ function love.draw()
         elseif level==3 then
             love.graphics.setColor(1,0,1,1)
             love.graphics.draw(BACKGROUND1,xBack1,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
-            love.graphics.draw(BACKGROUND2,xBack2,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
             love.graphics.draw(FRONTGROUND1,xFront1,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
-            love.graphics.draw(FRONTGROUND2,xFront2,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
+            love.graphics.draw(FRONTGROUND2,xFront2,0,0,0.5050*SCREEN_W/700,0.5*SCREEN_H/500)
             love.graphics.setColor(1,1,1,1)
             love.graphics.draw(LEVEL_3,0,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
         end
