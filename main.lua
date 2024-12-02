@@ -1,4 +1,4 @@
-love.window.setFullscreen( true )
+love.window.setFullscreen( false )
 local SCREEN_W,SCREEN_H = love.graphics.getDimensions()
 SCREEN_W = 1.4*SCREEN_H
 love.window.setMode(SCREEN_W, SCREEN_H)
@@ -126,7 +126,7 @@ music1:setLooping( true )
 music2:setLooping( true )
 music3:setLooping( true )
 music1:play()
-love.audio.setVolume( 0 )
+love.audio.setVolume( 100 )
 function love.load()
     state="start"
     mouse=0
