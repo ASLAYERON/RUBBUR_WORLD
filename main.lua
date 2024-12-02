@@ -241,9 +241,7 @@ function love.mousepressed( x, y)
         end
     end
     if state == "game_over" then
-        if testHitboxPoint(x,y,RECOMMENCERx,RECOMMENCERy,RECOMMENCERxScale,RECOMMENCERyScale) then
-            love.load()
-        end
+        love.load()
     end
 
     mouse=1
