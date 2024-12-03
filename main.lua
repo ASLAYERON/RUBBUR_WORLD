@@ -27,6 +27,7 @@ local sablier_speed = 3
 local sablierBALL = 0
 local secu = 0
 local physics_boost = 1
+local pausetime=0
 
 local scroll_speed = 100
 local STARTx = SCREEN_W/2-20*Xpix
@@ -113,6 +114,7 @@ local BACKGROUND1 = love.graphics.newImage("assets/background.png")
 local BACKGROUND2 = love.graphics.newImage("assets/background.png")
 local FRONTGROUND1 = love.graphics.newImage("assets/frontground.png")
 local FRONTGROUND2 = love.graphics.newImage("assets/frontground.png")
+local PAUSE = love.graphics.newImage("assets/PAUSE.png")
 local texture = love.graphics.newImage("assets/1.png")
 local PLAYER = love.graphics.newImage("assets/player.png")
 local BALL = love.graphics.newImage("assets/ball.png")
@@ -126,7 +128,7 @@ music1:setLooping( true )
 music2:setLooping( true )
 music3:setLooping( true )
 music1:play()
-love.audio.setVolume( 100 )
+love.audio.setVolume( 0 )
 function love.load()
     state="start"
     mouse=0
@@ -256,9 +258,22 @@ function love.update(dt)
 
 
     --check boutons
+    pausetime=pausetime+dt
     if love.keyboard.isDown( "escape" ) then
         print("exit")
         love.event.quit()
+    end
+    if love.keyboard.isDown( "space" ) and state=="game_over" then
+        love.load()
+    end
+    if love.keyboard.isDown( "p" ) then
+        if state=="play" and pausetime>0.5 then
+            state="pause"
+            pausetime=0
+        elseif state=="pause" and pausetime>0.5 then
+            state="play"
+            pausetime=0
+        end
     end
 
     press=0
@@ -407,6 +422,7 @@ function love.draw()
         love.graphics.draw(BACKGROUND2,xBack2,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
         love.graphics.draw(FRONTGROUND1,xFront1,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
         love.graphics.draw(FRONTGROUND2,xFront2,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
+        SCORE="SCORE :"..tostring(math.floor(score+0.5))
         --love.graphics.circle("fill",xPLAYER,yPLAYER,PLAYERrayon)
         love.graphics.setColor(1,1,1,1)
         for BLOCnum = 1,5,1 do
@@ -419,6 +435,9 @@ function love.draw()
         end
         love.graphics.setColor(1,1,1,1)
         love.graphics.draw(PLAYER,xPLAYER,yPLAYER,math.deg(v/10000),0.5*SCREEN_W/700,0.5*SCREEN_H/500,75,75)
+        love.graphics.setColor(0,0,0,1)
+        love.graphics.print(SCORE,SCREEN_W-20*Xpix,0,0,0.3*Xpix)
+        love.graphics.setColor(1,1,1,1)
 
     elseif state =="game_over" then
         music2:stop()
@@ -438,6 +457,7 @@ function love.draw()
             love.graphics.draw(FRONTGROUND1,xFront1,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
             love.graphics.draw(FRONTGROUND2,xFront2,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
             love.graphics.setColor(1,1,1,1)
+            love.graphics.draw(PLAYER,xPLAYER,yPLAYER,math.deg(v/10000),0.5*SCREEN_W/700,0.5*SCREEN_H/500,75,75)
             love.graphics.draw(LEVEL_2,0,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
         elseif level==3 then
             love.graphics.setColor(1,0,1,1)
@@ -445,10 +465,12 @@ function love.draw()
             love.graphics.draw(FRONTGROUND1,xFront1,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
             love.graphics.draw(FRONTGROUND2,xFront2,0,0,0.5050*SCREEN_W/700,0.5*SCREEN_H/500)
             love.graphics.setColor(1,1,1,1)
+            love.graphics.draw(PLAYER,xPLAYER,yPLAYER,math.deg(v/10000),0.5*SCREEN_W/700,0.5*SCREEN_H/500,75,75)
             love.graphics.draw(LEVEL_3,0,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
         end
-
-
     end
+    if state=="pause" then
+        love.graphics.draw(PAUSE,0,0,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
+    end  
 
 end
