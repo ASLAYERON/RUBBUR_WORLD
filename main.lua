@@ -5,7 +5,7 @@ love.window.setMode(SCREEN_W, SCREEN_H)
 local Xpix = SCREEN_W/100
 local Ypix = SCREEN_H/100
 local yPLAYER = SCREEN_H/2
-local PLAYERrayon = 5.35*Xpix
+local PLAYERrayon = 5*Xpix
 local BALLrayon = 5.35*Xpix
 local state = "start"
 local level = 1
@@ -28,12 +28,16 @@ local sablierBALL = 0
 local secu = 0
 local physics_boost = 1
 local pausetime=0
-
+local choosedSkin=1
 local scroll_speed = 100
 local STARTx = SCREEN_W/2-20*Xpix
 local STARTy = SCREEN_H/2-15*Ypix
 local STARTxScale = 40*Xpix
 local STARTyScale = 15*Ypix
+local SKINxScale = 15*Xpix
+local SKINyScale = 20*Ypix
+local SKINx = 1*Xpix
+local SKINy = SCREEN_H-SKINyScale*1.5
 
 local RECOMMENCERx = 30*Xpix
 local RECOMMENCERy = 70*Ypix
@@ -104,19 +108,47 @@ local BALLS =
         tilt = 0,
     },
 }
-
+local SKINS =
+{
+    --1
+    {
+        x=10*Xpix,
+        y=10*Ypix,
+        nametag=love.graphics.newImage("assets/SKIN1name.png"),
+    },
+    --2
+    {
+        x=30*Xpix,
+        y=10*Ypix,
+        nametag=love.graphics.newImage("assets/SKIN2name.png"),
+    },
+    --3
+    {
+        x=50*Xpix,
+        y=10*Ypix,
+        nametag=love.graphics.newImage("assets/SKIN3name.png"),
+    },
+    --4
+    {
+        x=70*Xpix,
+        y=10*Ypix,
+        nametag=love.graphics.newImage("assets/SKIN4name.png"),
+    },
+}
 
 
 local BACKGROUND_START = love.graphics.newImage("assets/start.png")
 local BOUTON_START = love.graphics.newImage("assets/BOUTON_START.png")
+local BOUTON_SKIN = love.graphics.newImage("assets/BOUTON_SKIN.png")
 local RECOMMENCER = love.graphics.newImage("assets/RECOMMENCER.png")
 local BACKGROUND1 = love.graphics.newImage("assets/background.png")
 local BACKGROUND2 = love.graphics.newImage("assets/background.png")
 local FRONTGROUND1 = love.graphics.newImage("assets/frontground.png")
 local FRONTGROUND2 = love.graphics.newImage("assets/frontground.png")
 local PAUSE = love.graphics.newImage("assets/PAUSE.png")
+local SKIN_BG= love.graphics.newImage("assets/SKIN_BG.png")
 local texture = love.graphics.newImage("assets/1.png")
-local PLAYER = love.graphics.newImage("assets/player.png")
+local SHADOW = love.graphics.newImage("assets/shadow.png")
 local BALL = love.graphics.newImage("assets/ball.png")
 local GAME_OVER = love.graphics.newImage("assets/GAME_OVER.png")
 local LEVEL_2 = love.graphics.newImage("assets/level2.png")
@@ -124,6 +156,13 @@ local LEVEL_3 = love.graphics.newImage("assets/level3.png")
 local music1 = love.audio.newSource( "assets/RUBBUR_WORLD1.mp3", "static" )
 local music2 = love.audio.newSource( "assets/RUBBUR_WORLD2.mp3", "static" )
 local music3 = love.audio.newSource( "assets/RUBBUR_WORLD3.mp3", "static" )
+local SKIN1 = love.graphics.newImage("assets/SKIN1.png")
+local SKIN2 = love.graphics.newImage("assets/SKIN2.png")
+local SKIN3 = love.graphics.newImage("assets/SKIN3.png")
+local SKIN4 = love.graphics.newImage("assets/SKIN4.png")
+local SKIN_BOX = love.graphics.newImage("assets/SKIN_BOX.png")
+local CHECK = love.graphics.newImage("assets/CHECK.png")
+local PLAYER=SKIN1
 music1:setLooping( true )
 music2:setLooping( true )
 music3:setLooping( true )
@@ -230,6 +269,7 @@ local function physiquePLAYER(dt)
         end
     else
         state="game_over"
+        pausetime=0
     end
 end
 
@@ -241,8 +281,25 @@ function love.mousepressed( x, y)
             state = "play"
             music1:play()
         end
+        if testHitboxPoint(x,y,SKINx,SKINy,SKINxScale,SKINyScale) and pausetime>0.5 then
+            pausetime=0
+            state="skin"
+        end
     end
-    if state == "game_over" then
+    if state== "skin" then
+            if testHitboxPoint(x,y,SKINx,SKINy,SKINxScale,SKINyScale) and pausetime>0.5 then
+                pausetime=0
+                state="start"
+            end
+            for SKINnum = 1,4,1 do
+                if testHitboxPoint(x,y,SKINS[SKINnum].x,SKINS[SKINnum].y,SKINxScale,SKINyScale) then
+                    choosedSkin=SKINnum
+                end
+            end
+
+    end
+    if state == "game_over" and pausetime>1 then
+        pausetime=0
         love.load()
     end
 
@@ -263,8 +320,12 @@ function love.update(dt)
         print("exit")
         love.event.quit()
     end
-    if love.keyboard.isDown( "space" ) and state=="game_over" then
+    if love.keyboard.isDown( "space" ) and state=="game_over" and pausetime>1 then
+        pausetime=0
         love.load()
+    end
+    if love.keyboard.isDown( "space" ) and state=="skin" then
+        state="start"
     end
     if love.keyboard.isDown( "p" ) then
         if state=="play" and pausetime>0.5 then
@@ -333,6 +394,7 @@ function love.update(dt)
 
                 if testHitboxRondRectangle(xPLAYER,yPLAYER,PLAYERrayon,BLOCS[BLOCnum].x,BLOCS[BLOCnum].y,BLOCS[BLOCnum].xScale,BLOCS[BLOCnum].yScale) then
                     state = "game_over"
+                    pausetime=0
                 end
             end
         end
@@ -366,6 +428,7 @@ function love.update(dt)
                         BALLS[BALLnum].tilt=BALLS[BALLnum].tilt-(scroll_speed/30)*dt
                         if testHitboxRond(xPLAYER,yPLAYER,PLAYERrayon,BALLS[BALLnum].x,BALLS[BALLnum].y,BALLrayon) then
                             state = "game_over"
+                            pausetime=0
                             print("hehe c moi batard")
                         end
                     end
@@ -401,17 +464,38 @@ function love.update(dt)
             state="play"
         end
     end
+    if choosedSkin==1 then
+        PLAYER=SKIN1
+    elseif choosedSkin==2 then
+        PLAYER=SKIN2
+    elseif choosedSkin==3 then
+        PLAYER=SKIN3
+    elseif choosedSkin==4 then
+        PLAYER=SKIN4
+    end
 end
+
 
 function love.draw()
 
     if state=="start" then
         love.graphics.draw(BACKGROUND_START,0,0,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
         love.graphics.draw(BOUTON_START,STARTx,STARTy,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
+        love.graphics.draw(BOUTON_SKIN,SKINx,SKINy,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
+        --love.graphics.rectangle("fill",SKINx,SKINy,SKINxScale,SKINyScale)
 
+    elseif state=="skin" then
+        love.graphics.draw(SKIN_BG,0,0,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
+        love.graphics.draw(BOUTON_SKIN,SKINx,SKINy,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
+        for SKINnum = 1,4,1 do
+            love.graphics.draw(SKIN_BOX,SKINS[SKINnum].x,SKINS[SKINnum].y,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
+            love.graphics.draw(SKINS[SKINnum].nametag,SKINS[SKINnum].x,SKINS[SKINnum].y,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
+            if SKINnum==choosedSkin then
+                love.graphics.draw(CHECK,SKINS[SKINnum].x,SKINS[SKINnum].y,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
+            end
+        end
     elseif state=="play" then
 
- 
         if level >=2 then
             love.graphics.setColor(0,1,1,1)
         end
@@ -423,7 +507,6 @@ function love.draw()
         love.graphics.draw(FRONTGROUND1,xFront1,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
         love.graphics.draw(FRONTGROUND2,xFront2,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
         SCORE="SCORE :"..tostring(math.floor(score+0.5))
-        --love.graphics.circle("fill",xPLAYER,yPLAYER,PLAYERrayon)
         love.graphics.setColor(1,1,1,1)
         for BLOCnum = 1,5,1 do
             love.graphics.draw(BLOCS[BLOCnum].texture,BLOCS[BLOCnum].x,BLOCS[BLOCnum].y,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
@@ -435,6 +518,10 @@ function love.draw()
         end
         love.graphics.setColor(1,1,1,1)
         love.graphics.draw(PLAYER,xPLAYER,yPLAYER,math.deg(v/10000),0.5*SCREEN_W/700,0.5*SCREEN_H/500,75,75)
+        love.graphics.setColor(1,1,1,0.6)
+        love.graphics.draw(SHADOW,xPLAYER,yPLAYER,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500,75,75)
+        love.graphics.setColor(1,1,1,1)
+        --love.graphics.circle("fill",xPLAYER,yPLAYER,PLAYERrayon)
         love.graphics.setColor(0,0,0,1)
         love.graphics.print(SCORE,SCREEN_W-20*Xpix,0,0,0.3*Xpix)
         love.graphics.setColor(1,1,1,1)
@@ -457,7 +544,16 @@ function love.draw()
             love.graphics.draw(FRONTGROUND1,xFront1,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
             love.graphics.draw(FRONTGROUND2,xFront2,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
             love.graphics.setColor(1,1,1,1)
+            for BLOCnum = 1,5,1 do
+                love.graphics.draw(BLOCS[BLOCnum].texture,BLOCS[BLOCnum].x,BLOCS[BLOCnum].y,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
+            end
+            for BALLnum = 1,3,1 do
+                love.graphics.draw(BALL,BALLS[BALLnum].x,BALLS[BALLnum].y,BALLS[BALLnum].tilt,0.5*SCREEN_W/700,0.5*SCREEN_H/500,75,75)
+            end
             love.graphics.draw(PLAYER,xPLAYER,yPLAYER,math.deg(v/10000),0.5*SCREEN_W/700,0.5*SCREEN_H/500,75,75)
+            love.graphics.setColor(1,1,1,0.6)
+            love.graphics.draw(SHADOW,xPLAYER,yPLAYER,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500,75,75)
+            love.graphics.setColor(1,1,1,1)
             love.graphics.draw(LEVEL_2,0,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
         elseif level==3 then
             love.graphics.setColor(1,0,1,1)
@@ -465,12 +561,20 @@ function love.draw()
             love.graphics.draw(FRONTGROUND1,xFront1,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
             love.graphics.draw(FRONTGROUND2,xFront2,0,0,0.5050*SCREEN_W/700,0.5*SCREEN_H/500)
             love.graphics.setColor(1,1,1,1)
+            for BLOCnum = 1,5,1 do
+                love.graphics.draw(BLOCS[BLOCnum].texture,BLOCS[BLOCnum].x,BLOCS[BLOCnum].y,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
+            end
+            for BALLnum = 1,3,1 do
+                love.graphics.draw(BALL,BALLS[BALLnum].x,BALLS[BALLnum].y,BALLS[BALLnum].tilt,0.5*SCREEN_W/700,0.5*SCREEN_H/500,75,75)
+            end
             love.graphics.draw(PLAYER,xPLAYER,yPLAYER,math.deg(v/10000),0.5*SCREEN_W/700,0.5*SCREEN_H/500,75,75)
+            love.graphics.setColor(1,1,1,0.6)
+            love.graphics.draw(SHADOW,xPLAYER,yPLAYER,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500,75,75)
+            love.graphics.setColor(1,1,1,1)
             love.graphics.draw(LEVEL_3,0,0,0,0.505*SCREEN_W/700,0.5*SCREEN_H/500)
         end
     end
     if state=="pause" then
         love.graphics.draw(PAUSE,0,0,0,0.5*SCREEN_W/700,0.5*SCREEN_H/500)
-    end  
-
+    end 
 end
